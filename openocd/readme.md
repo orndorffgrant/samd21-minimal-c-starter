@@ -1,0 +1,1 @@
+The contents of this directory are scripts from the openocd project that are vendored here for convenience.
