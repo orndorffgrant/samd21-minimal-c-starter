@@ -44,6 +44,35 @@ void configure_rtc_1hz_interrupt(GCLKRegisters *gclk_registers,
   rtc_registers->ctrl = rtc_enable | rtc_mode | rtc_matchclear;
 }
 
+void configure_sercom0_uart(uint32_t *nvic_iser, GCLKRegisters *gclk_registers, PortRegisters *port_registers) {
+  // TODO Enable bus clock
+  // The SERCOM bus clock (CLK_SERCOMx_APB) can be enabled and disabled in the Power Manager. Refer to
+  // Peripheral Clock Masking for details and default status of this clock.
+
+  // Configure generator 5 with no divider
+  uint32_t gclk_gen_id_5 = 5;
+  gclk_registers->gendiv = gclk_gen_id_5;
+  // Enable generator 5 and set source to onboard low power 32k clock
+  uint32_t gclk_gen_enable = 1 << 16;
+  uint32_t gclk_gen_source_ulp32k = 3 << 8;
+  gclk_registers->genctrl =
+      gclk_gen_enable | gclk_gen_source_ulp32k | gclk_gen_id_5;
+  // Enable GCLK_SERCOM0_CORE and set generator 5 as source
+  uint32_t gclk_sercom0_core = 0x14;
+  uint32_t gclk_source_gen_5 = gclk_gen_id_5 << 8;
+  uint32_t gclk_enable = 1 << 14;
+  gclk_registers->clkctrl = gclk_enable | gclk_source_gen_5 | gclk_sercom0_core;
+
+  // Configure PA10 as Rx
+  port_registers->groups[0].direction_clear = 1 << 10;
+  // TODO do I need to set pmuxen?
+  // set INEN
+  port_registers->groups[0].pin_config[10] = 1 << 1;
+
+  // Configure PA11 as Tx
+  port_registers->groups[0].direction = 1 << 11;
+}
+
 int main() {
   PortRegisters *port_registers = ((PortRegisters *)PORT_REGISTERS_ADDRESS);
   configure_board_led(port_registers);

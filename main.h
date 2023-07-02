@@ -3,6 +3,28 @@
 
 #include <stdint.h>
 
+typedef struct _SercomUartRegisters {
+  volatile uint32_t ctrla;
+  volatile uint32_t ctrlb;
+  volatile const uint8_t _reserved0[4];
+  volatile uint16_t baud;
+  volatile uint8_t rxpl;
+  volatile const uint8_t _reserved1[5];
+  volatile uint8_t intenclr;
+  volatile const uint8_t _reserved2;
+  volatile uint8_t intenset;
+  volatile const uint8_t _reserved3;
+  volatile uint8_t intflag;
+  volatile const uint8_t _reserved4;
+  volatile uint16_t status;
+  volatile uint32_t syncbusy;
+  volatile const uint8_t _reserved5[8];
+  volatile uint8_t data[2];
+  volatile const uint8_t _reserved6[6];
+  volatile uint8_t dbgctrl;
+} SercomUartRegisters;
+#define SERCOM0_REGISTERS_ADDRESS 0xTODO
+
 typedef struct _RTCRegistersMode0 {
   volatile uint16_t ctrl;
   volatile uint16_t readreq;
