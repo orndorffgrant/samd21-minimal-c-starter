@@ -44,10 +44,13 @@ void configure_rtc_1hz_interrupt(GCLKRegisters *gclk_registers,
   rtc_registers->ctrl = rtc_enable | rtc_mode | rtc_matchclear;
 }
 
-void configure_sercom0_uart(uint32_t *nvic_iser, GCLKRegisters *gclk_registers, PortRegisters *port_registers) {
+void configure_sercom0_uart(uint32_t *nvic_iser, GCLKRegisters *gclk_registers,
+                            PortRegisters *port_registers,
+                            SercomUartRegisters *sercom0_uart_registers) {
   // TODO Enable bus clock
-  // The SERCOM bus clock (CLK_SERCOMx_APB) can be enabled and disabled in the Power Manager. Refer to
-  // Peripheral Clock Masking for details and default status of this clock.
+  // The SERCOM bus clock (CLK_SERCOMx_APB) can be enabled and disabled in the
+  // Power Manager. Refer to Peripheral Clock Masking for details and default
+  // status of this clock.
 
   // Configure generator 5 with no divider
   uint32_t gclk_gen_id_5 = 5;
@@ -63,31 +66,40 @@ void configure_sercom0_uart(uint32_t *nvic_iser, GCLKRegisters *gclk_registers, 
   uint32_t gclk_enable = 1 << 14;
   gclk_registers->clkctrl = gclk_enable | gclk_source_gen_5 | gclk_sercom0_core;
 
-  // Configure PA10 as Rx
-  port_registers->groups[0].direction_clear = 1 << 10;
+  // Configure PA8 as Rx
+  port_registers->groups[0].direction_clear = 1 << 8;
   // TODO do I need to set pmuxen?
   // set INEN
-  port_registers->groups[0].pin_config[10] = 1 << 1;
+  port_registers->groups[0].pin_config[8] = 1 << 1;
 
-  // Configure PA11 as Tx
-  port_registers->groups[0].direction = 1 << 11;
+  // Configure PA9 as Tx
+  port_registers->groups[0].direction = 1 << 9;
+
+
+  // TODO actually configure sercom
 }
 
 int main() {
   PortRegisters *port_registers = ((PortRegisters *)PORT_REGISTERS_ADDRESS);
+  GCLKRegisters *gclk_registers = ((GCLKRegisters *)GCLK_REGISTERS_ADDRESS);
+  RTCRegistersMode0 *rtc_registers =
+      ((RTCRegistersMode0 *)RTC_REGISTERS_ADDRESS);
+  SercomUartRegisters *sercom0_uart_registers =
+      ((SercomUartRegisters *)SERCOM0_REGISTERS_ADDRESS);
+
   configure_board_led(port_registers);
   toggle_board_led(port_registers);
-
-  GCLKRegisters *gclk_registers = ((GCLKRegisters *)GCLK_REGISTERS_ADDRESS);
-  RTCRegistersMode0 *rtc_registers = ((RTCRegistersMode0 *)RTC_REGISTERS_ADDRESS);
   configure_rtc_1hz_interrupt(gclk_registers, NVIC_ISER, rtc_registers);
+  configure_sercom0_uart(NVIC_ISER, gclk_registers, port_registers,
+                         sercom0_uart_registers);
 
   return 0;
 }
 
 void rtc_handler() {
   PortRegisters *port_registers = ((PortRegisters *)PORT_REGISTERS_ADDRESS);
-  RTCRegistersMode0 *rtc_register = ((RTCRegistersMode0 *)RTC_REGISTERS_ADDRESS);
+  RTCRegistersMode0 *rtc_register =
+      ((RTCRegistersMode0 *)RTC_REGISTERS_ADDRESS);
 
   toggle_board_led(port_registers);
 

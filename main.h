@@ -23,7 +23,7 @@ typedef struct _SercomUartRegisters {
   volatile const uint8_t _reserved6[6];
   volatile uint8_t dbgctrl;
 } SercomUartRegisters;
-#define SERCOM0_REGISTERS_ADDRESS 0xTODO
+#define SERCOM0_REGISTERS_ADDRESS 0x42000800
 
 typedef struct _RTCRegistersMode0 {
   volatile uint16_t ctrl;
