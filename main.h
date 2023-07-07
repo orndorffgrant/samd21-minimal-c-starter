@@ -25,6 +25,28 @@ typedef struct _SercomUartRegisters {
 } SercomUartRegisters;
 #define SERCOM0_REGISTERS_ADDRESS 0x42000800
 
+typedef struct _PowerManagerRegisters {
+  volatile uint8_t ctrl;
+  volatile uint8_t sleep;
+  volatile const uint8_t _reserved0[6];
+  volatile uint8_t cpusel;
+  volatile uint8_t apbasel;
+  volatile uint8_t apbbsel;
+  volatile uint8_t apbcsel;
+  volatile const uint8_t _reserved1[8];
+  volatile uint32_t ahbmask;
+  volatile uint32_t apbamask;
+  volatile uint32_t apbbmask;
+  volatile uint32_t apbcmask;
+  volatile const uint8_t _reserved2[16];
+  volatile uint8_t intenclr;
+  volatile uint8_t intenset;
+  volatile uint8_t intflag;
+  volatile const uint8_t _reserved3;
+  volatile uint8_t rcause;
+} PowerManagerRegisters;
+#define POWER_MANAGER_REGISTERS_ADDRESS 0x40000400
+
 typedef struct _RTCRegistersMode0 {
   volatile uint16_t ctrl;
   volatile uint16_t readreq;

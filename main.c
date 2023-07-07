@@ -44,13 +44,13 @@ void configure_rtc_1hz_interrupt(GCLKRegisters *gclk_registers,
   rtc_registers->ctrl = rtc_enable | rtc_mode | rtc_matchclear;
 }
 
-void configure_sercom0_uart(uint32_t *nvic_iser, GCLKRegisters *gclk_registers,
+void configure_sercom0_uart(uint32_t *nvic_iser, PowerManagerRegisters *power_manager_registers,
+                            GCLKRegisters *gclk_registers,
                             PortRegisters *port_registers,
                             SercomUartRegisters *sercom0_uart_registers) {
-  // TODO Enable bus clock
-  // The SERCOM bus clock (CLK_SERCOMx_APB) can be enabled and disabled in the
-  // Power Manager. Refer to Peripheral Clock Masking for details and default
-  // status of this clock.
+  // Enable bus clock in Power Manager
+  uint32_t apbc_mask_sercom0 = 1 << 2;
+  power_manager_registers->apbcmask |= apbc_mask_sercom0;
 
   // Configure generator 5 with no divider
   uint32_t gclk_gen_id_5 = 5;
