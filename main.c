@@ -106,15 +106,22 @@ void configure_sercom0_uart(uint32_t *nvic_iser, PowerManagerRegisters *power_ma
   //    a. Enable parity mode by writing 0x1 to the Frame Format field in the CTRLA register (CTRLA.FORM).
   //    b. Configure the Parity Mode bit in the CTRLB register (CTRLB.PMODE) for even or odd parity.
   // Skipping parity for now
-  uint32_t one_stop_bit = 0 << 6;
-  sercom0_uart_registers->ctrlb |= one_stop_bit;
 
   // 8. Configure the number of stop bits in the Stop Bit Mode bit in the CTRLB register (CTRLB.SBMODE).
+  uint32_t one_stop_bit = 0 << 6;
+  sercom0_uart_registers->ctrlb |= one_stop_bit;
+  
   // 9. When using an internal clock, write the Baud register (BAUD) to generate the desired baud rate.
+  sercom0_uart_registers->baud = 1234; // TODO
   // 10. Enable the transmitter and receiver by writing '1' to the Receiver Enable and Transmitter Enable bits in the
   //     CTRLB register (CTRLB.RXEN and CTRLB.TXEN).
+  uint32_t rxen = 1 << 17;
+  uint32_t txen = 1 << 16;
+  sercom0_uart_registers->ctrlb |= rxen | txen;
 
   // This peripheral is enabled by writing '1' to the Enable bit in the Control A register (CTRLA.ENABLE)
+  uint32_t enable = 1 << 1;
+  sercom0_uart_registers->ctrla |=  enable;
 }
 
 int main() {
